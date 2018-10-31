@@ -1,6 +1,7 @@
-package concurrency.buffer;
+package concurrency.buffer.waitnotifyAll;
 
-/*********************BUFFER*****************************/
+
+import concurrency.buffer.Buffer;
 
 public class BufferImpl<E> implements Buffer<E> {
 
@@ -12,11 +13,13 @@ public class BufferImpl<E> implements Buffer<E> {
 
     public BufferImpl(int size) {
         this.size = size;
-        buf = (E[])new Object[size];
+	//buf =  new  E[size];
+	buf = (E[]) new  Object[size];
     }
 
     public synchronized void put(E o) throws InterruptedException {
-        while (count==size) wait();
+        while (count==size) 
+	    wait();
         buf[in] = o;
         ++count;
         in=(in+1) % size;
@@ -24,7 +27,8 @@ public class BufferImpl<E> implements Buffer<E> {
     }
 
     public synchronized E get() throws InterruptedException {
-        while (count==0) wait();
+        while (count==0) 
+	    wait();
         E o = buf[out];
         buf[out]=null;
         --count;
