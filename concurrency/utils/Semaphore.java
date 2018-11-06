@@ -1,4 +1,4 @@
-package concurrency.semaphore;
+package concurrency.utils;
 
 // The Semaphore Class
 // up() is the V operation

@@ -6,7 +6,7 @@
 package concurrency.buffer.fixedSema;
 
 import concurrency.buffer.Buffer;
-import concurrency.semaphore.Semaphore;
+import concurrency.utils.Semaphore;
 
 class FixedSemaBuffer<E> implements Buffer<E> {
     protected E[] buf;

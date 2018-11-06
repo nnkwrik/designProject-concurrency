@@ -1,6 +1,7 @@
 package concurrency.buffer;
 
 import concurrency.buffer.badSema.DisplaySemaBuffer;
+import concurrency.buffer.blockingQueue.DisplayBlockingQueueBuffer;
 import concurrency.buffer.fixedSema.DisplayFixedSemaBuffer;
 import concurrency.buffer.lock.DisplayLockBuffer;
 import concurrency.buffer.swing.BoundedBuffer;
@@ -13,7 +14,8 @@ import concurrency.buffer.waitnotifyAll.DisplayWaitBuffer;
 public class Starter {
 
     public static void main(String[] args) {
-        testLock(1,1);
+        //TODO 多个时擦除有bug
+        testBlockingQueue(2,3);
     }
 
     public static void testWaitNotifyAll(int consumerNum, int producerNum){
@@ -37,6 +39,12 @@ public class Starter {
     public static void testLock(int consumerNum, int producerNum){
         BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
         Buffer<Character> b = new DisplayLockBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
+        boundedBuffer.start(b);
+    }
+
+    public static void testBlockingQueue(int consumerNum, int producerNum){
+        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
+        Buffer<Character> b = new DisplayBlockingQueueBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
         boundedBuffer.start(b);
     }
 

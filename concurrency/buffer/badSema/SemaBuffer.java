@@ -6,7 +6,7 @@
 package concurrency.buffer.badSema;
 
 import concurrency.buffer.Buffer;
-import concurrency.semaphore.*;
+import concurrency.utils.*;
 
 class SemaBuffer<E> implements Buffer<E> {
     protected E[] buf;

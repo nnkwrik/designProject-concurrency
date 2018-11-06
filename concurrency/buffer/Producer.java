@@ -21,6 +21,7 @@ public class Producer implements Runnable {
             int ai = 0;
             while (true) {
                 ThreadPanel.rotate(12);
+                System.out.println("Producer ====> " + alphabet.charAt(ai));
                 buf.put(alphabet.charAt(ai));
                 ai = (ai + 1) % alphabet.length();
                 ThreadPanel.rotate(348);

@@ -18,6 +18,7 @@ public class Consumer implements Runnable {
         while(true) {
             ThreadPanel.rotate(180);
             Character c = buf.get();
+            System.out.println("Consumer <==== " + c);
             ThreadPanel.rotate(180);
         }
       } catch(InterruptedException e ){
