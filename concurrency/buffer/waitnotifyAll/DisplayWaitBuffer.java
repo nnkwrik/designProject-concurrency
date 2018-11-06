@@ -2,11 +2,11 @@ package concurrency.buffer.waitnotifyAll;
 
 import concurrency.buffer.swing.BufferCanvas;
 
-public class DisplayBuffer extends BufferImpl<Character> {
+public class DisplayWaitBuffer extends WaitBuffer<Character> {
     BufferCanvas disp_;
     char[] tmp;
 
-    public DisplayBuffer(BufferCanvas disp, int size) {
+    public DisplayWaitBuffer(BufferCanvas disp, int size) {
         super(size);
         disp_ = disp;
         tmp = new char[size];

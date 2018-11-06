@@ -3,11 +3,11 @@ package concurrency.buffer.fixedSema;
 
 import concurrency.buffer.swing.BufferCanvas;
 
-class DisplayFixedSemaBuffer extends FixedSemaBuffer<Character> {
+public class DisplayFixedSemaBuffer extends FixedSemaBuffer<Character> {
     BufferCanvas disp_;
     char[] tmp;
 
-    DisplayFixedSemaBuffer(BufferCanvas disp, int size) {
+    public DisplayFixedSemaBuffer(BufferCanvas disp, int size) {
         super(size);
         disp_ = disp;
         tmp = new char[size];

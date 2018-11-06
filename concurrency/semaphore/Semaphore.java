@@ -8,7 +8,7 @@ public class Semaphore {
 
     private int value;
 
-    public Semaphore (int initial) {
+    public Semaphore(int initial) {
         value = initial;
     }
 

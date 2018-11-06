@@ -3,11 +3,11 @@ package concurrency.buffer.badSema;
 
 import concurrency.buffer.swing.BufferCanvas;
 
-class DisplaySemaBuffer extends SemaBuffer<Character> {
+public class DisplaySemaBuffer extends SemaBuffer<Character> {
     BufferCanvas disp_;
     char[] tmp;
 
-    DisplaySemaBuffer(BufferCanvas disp, int size) {
+    public DisplaySemaBuffer(BufferCanvas disp, int size) {
         super(size);
         disp_ = disp;
         tmp = new char[size];
