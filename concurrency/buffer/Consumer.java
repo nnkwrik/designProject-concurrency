@@ -3,23 +3,27 @@
 */
 package concurrency.buffer;
 
-import concurrency.display.*;
+import concurrency.display.ThreadPanel;
+import concurrency.utils.Logger;
 
-/********************CONSUMER*******************************/
-
-class Consumer implements Runnable {
+public class Consumer implements Runnable {
 
     Buffer<Character> buf;
 
-    Consumer(Buffer<Character> b) {buf = b;}
+    public Consumer(Buffer<Character> b) {
+        buf = b;
+    }
 
     public void run() {
         try {
-            while(true) {
+            while (true) {
                 ThreadPanel.rotate(180);
                 Character c = buf.get();
+                Logger.log("Consumer [" + c + "] <====");
+                Logger.out();
                 ThreadPanel.rotate(180);
             }
-        } catch(InterruptedException e ){}
+        } catch (InterruptedException e) {
+        }
     }
 }

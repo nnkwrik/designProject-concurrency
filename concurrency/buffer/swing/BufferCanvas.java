@@ -1,20 +1,20 @@
 /*
 @author  j.n.magee
 */
-package concurrency.buffer;
+package concurrency.buffer.swing;
 
 import java.awt.*;
-import java.applet.*;
+import javax.swing.*;
 
 
 /**************************************************************/
 
-class BufferCanvas extends Canvas {
+public class BufferCanvas extends JPanel {
     String title_;
     int slots_;
     int in_=0;
     int out_=0;
-    char[] buf_ = {' ',' ',' ',' ',' '};
+    char[] buf_;
 
     Font f1 = new Font("Helvetica",Font.ITALIC+Font.BOLD,24);
     Font f2 = new Font("TimesRoman",Font.BOLD,36);
@@ -23,39 +23,49 @@ class BufferCanvas extends Canvas {
         super();
         title_=title;
         slots_=slots;
-        setSize(20+50*slots_,150);
         setBackground(Color.cyan);
+        buf_ = new char[slots];
     }
 
-    public void setvalue(char[] buf,int in, int out){
+    public void setValue(char[] buf,int in, int out){
         buf_=buf;
         in_=in;
         out_=out;
         repaint();
     }
 
-    public void paint(Graphics g) {
-        update(g);
+    public Dimension getPreferredSize() {
+	return new Dimension(20+50*slots_,150);
+//	return new Dimension(20+50*slots_,150);
     }
 
+
+    public synchronized void update(Graphics g){
+	paintComponent(g);
+    }
+	
     Image offscreen;
     Dimension offscreensize;
     Graphics offgraphics;
 
-    public synchronized void update(Graphics g){
+    public void paintComponent(Graphics g){
+	super.paintComponent(g);
+	Graphics2D gc2 = (Graphics2D) g;
+	setOpaque(true);
+
         Dimension d = getSize();
-        if ((offscreen == null) || (d.width != offscreensize.width)
-                || (d.height != offscreensize.height)) {
-            offscreen = createImage(d.width, d.height);
-            offscreensize = d;
-            offgraphics = offscreen.getGraphics();
-            offgraphics.setFont(getFont());
-        }
+	if ((offscreen == null) || (d.width != offscreensize.width)
+	    || (d.height != offscreensize.height)) {
+	    offscreen = createImage(d.width, d.height);
+	    offscreensize = d;
+	    offgraphics = offscreen.getGraphics();
+	    offgraphics.setFont(getFont());
+	}
 
-        offgraphics.setColor(getBackground());
-        offgraphics.fillRect(0, 0, d.width, d.height);
+	offgraphics.setColor(getBackground());
+	offgraphics.fillRect(0, 0, d.width, d.height);
 
-        // Display the title
+	// Display the title
         offgraphics.setColor(Color.black);
         offgraphics.setFont(f1);
         FontMetrics fm = offgraphics.getFontMetrics();
@@ -83,6 +93,3 @@ class BufferCanvas extends Canvas {
         g.drawImage(offscreen, 0, 0, null);
     }
 }
-
-
-/**************************************************************/
