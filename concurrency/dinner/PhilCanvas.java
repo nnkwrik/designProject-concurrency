@@ -4,14 +4,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import javax.swing.*;
 
-class PhilCanvas extends JPanel {
+public class PhilCanvas extends JPanel {
 
-    static final int NUMPHILS = 5;
-    static final int THINKING = 0;
-    static final int HUNGRY = 1;
-    static final int GOTRIGHT = 2;
-    static final int EATING = 3;
-    static final int GOTLEFT = 4;
+    public static final int NUMPHILS = 5;
+    public static final int THINKING = 0;
+    public static final int HUNGRY = 1;
+    public static final int GOTRIGHT = 2;
+    public static final int EATING = 3;
+    public static final int GOTLEFT = 4;
 
     Image[] imgs = new Image[5];
 
@@ -25,7 +25,7 @@ class PhilCanvas extends JPanel {
 
     boolean frozen = false;
 
-    PhilCanvas() {
+    public PhilCanvas() {
         super();
 
         MediaTracker mt;
@@ -60,7 +60,7 @@ class PhilCanvas extends JPanel {
     Dimension offscreensize;
     Graphics offgraphics;
 
-    void backdrop() {
+    public void backdrop() {
         Dimension d = getSize();
         if ((offscreen == null) || (d.width != offscreensize.width)
                 || (d.height != offscreensize.height)) {
@@ -75,7 +75,7 @@ class PhilCanvas extends JPanel {
         offgraphics.fillRect(-d.width / 2, -d.height / 2, d.width, d.height);
     }
 
-    void drawtable() {
+    public void drawtable() {
         offgraphics.setColor(Color.red);
         offgraphics.fillOval(-45, -45, 90, 90);
         offgraphics.setColor(Color.black);
@@ -105,37 +105,37 @@ class PhilCanvas extends JPanel {
         g.drawImage(offscreen, 0, 0, null);
     }
 
-    void philPaint(Graphics g, int i) {
+    public void philPaint(Graphics g, int i) {
         Graphics2D g2D = (Graphics2D) g;
         g2D.drawImage(imgs[state[i]], philPlace[i], this);
     }
 
-    synchronized void setPhil(int id, int s) throws InterruptedException {
+    public synchronized void setPhil(int id, int s) throws InterruptedException {
         while (frozen) wait();
         state[id] = s;
         repaint();
     }
 
-    synchronized void freeze() {
+    public synchronized void freeze() {
         frozen = true;
     }
 
-    synchronized void thaw() {
+    public synchronized void thaw() {
         frozen = false;
         notifyAll();
     }
 
-    synchronized void setFork(int id, boolean taken) {
+    public synchronized void setFork(int id, boolean taken) {
         untable[id] = !taken;
     }
 
-    boolean deadlocked() {
+    public boolean deadlocked() {
         int i = 0;
         while (i < NUMPHILS && state[i] == GOTRIGHT) ++i;
         return i == NUMPHILS;
     }
 
-    void initPlacing() {
+    public void initPlacing() {
 
         double radius = 100.0;
         double philWidth = imgs[0].getWidth(this);

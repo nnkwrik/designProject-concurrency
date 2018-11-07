@@ -1,59 +1,45 @@
 package concurrency.dinner;
 
+import concurrency.dinner.philosopher.Philosopher;
+
 import java.awt.BorderLayout;
-import java.awt.event.*;
+import java.lang.reflect.Constructor;
+import java.util.stream.IntStream;
 import javax.swing.*;
 
 public class Diners {
 
-    PhilCanvas display;
+    public PhilCanvas display;
     Thread[] phil = new Thread[PhilCanvas.NUMPHILS];
     Fork[] fork = new Fork[PhilCanvas.NUMPHILS];
     JScrollBar slider;
     JButton restart;
     JButton freeze;
-    JCheckBox fixit;
-    boolean fixed = false;
+    Class<? extends Philosopher> philosopherClazz;
 
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Diners");
-        Diners app = new Diners();
-        JComponent contents = app.createComponents();
-        frame.getContentPane().add(contents);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        app.start();
+    private Diners() {
     }
 
     public JComponent createComponents() {
         JPanel p0 = new JPanel();
         p0.setLayout(new BorderLayout());
-        fixit = new JCheckBox("Fixed It");
         display = new PhilCanvas();
         display.setSize(300, 320);
         p0.add("Center", display);
         slider = new JScrollBar(JScrollBar.HORIZONTAL, 50, 5, 0, 100);
 
         restart = new JButton("Restart");
-        restart.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (display.deadlocked()) {
-                    stop();
-                    slider.setValue(50);
-                    start();
-                }
-                display.thaw();
+        restart.addActionListener(e -> {
+            if (display.deadlocked()) {
+                stop();
+                slider.setValue(50);
+                start();
             }
+            display.thaw();
         });
 
         freeze = new JButton("Freeze");
-        freeze.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                display.freeze();
-            }
-        });
+        freeze.addActionListener(e -> display.freeze());
 
 
         JPanel p1 = new JPanel();
@@ -61,17 +47,22 @@ public class Diners {
         p1.add("Center", slider);
         p1.add("East", restart);
         p1.add("West", freeze);
-        p1.add("South", fixit);
         p0.add("South", p1);
         return p0;
     }
 
-    Thread makePhilosopher(Diners d, int id, Fork left, Fork right) {
-        fixed = fixit.isSelected();
-        if (fixed)
-            return new FixedPhilosopher(d, id, left, right);
-        else
-            return new Philosopher(d, id, left, right);
+
+
+    public static Diners create(Class<? extends Philosopher> philosopherClazz) {
+        JFrame frame = new JFrame("Diners");
+        Diners app = new Diners();
+        app.philosopherClazz = philosopherClazz;
+        JComponent contents = app.createComponents();
+        frame.getContentPane().add(contents);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        return app;
     }
 
     public int sleepTime() {
@@ -83,19 +74,25 @@ public class Diners {
     }
 
     public void start() {
+        Constructor<? extends Philosopher> constructor = null;
+        try {
+            constructor = philosopherClazz.getConstructor(Diners.class, Integer.TYPE, Fork.class, Fork.class);
 
-        for (int i = 0; i < display.NUMPHILS; ++i)
-            fork[i] = new Fork(display, i);
-        for (int i = 0; i < display.NUMPHILS; ++i) {
-            phil[i] = makePhilosopher(this, i,
-                    fork[(i - 1 + display.NUMPHILS) % display.NUMPHILS],
-                    fork[i]);
-            phil[i].start();
+            IntStream.range(0,display.NUMPHILS).forEach(i -> fork[i] = new Fork(display, i));
+
+            for (int i = 0; i < display.NUMPHILS; i++) {
+                phil[i] = constructor.newInstance(this, i,
+                        fork[(i - 1 + display.NUMPHILS) % display.NUMPHILS],
+                        fork[i]);
+                phil[i].start();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public void stop() {
-        for (int i = 0; i < display.NUMPHILS; ++i) {
+        for (int i = 0; i < display.NUMPHILS; i++) {
             phil[i].interrupt();
         }
     }

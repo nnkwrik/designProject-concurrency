@@ -1,24 +1,17 @@
-package concurrency.dinner;
+package concurrency.dinner.philosopher;
 
-class FixedPhilosopher extends Thread {
+import concurrency.dinner.Diners;
+import concurrency.dinner.Fork;
 
-    int identity;
-    boolean stopRequested = false;
-    PhilCanvas view;
-    Diners controller;
-    Fork left;
-    Fork right;
 
-    FixedPhilosopher(Diners controller, int identity, Fork left, Fork right) {
-        this.controller = controller;
-        this.view = controller.display;
-        this.identity = identity;
-        this.left = left;
-        this.right = right;
+public class FixedPhilosopher extends Philosopher {
+
+    public FixedPhilosopher(Diners controller, int identity, Fork left, Fork right) {
+        super(controller,identity,left,right);
     }
 
     public void run() {
-        while (!stopRequested) {
+        while (true) {
             try {
                 //thinking
                 view.setPhil(identity, view.THINKING);
@@ -48,8 +41,4 @@ class FixedPhilosopher extends Thread {
         }
     }
 
-
-    public void stopRequested() {
-        stopRequested = true;
-    }
 }

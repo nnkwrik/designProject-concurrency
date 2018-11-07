@@ -1,19 +1,15 @@
-package concurrency.dinner;
+package concurrency.dinner.philosopher;
 
-class Philosopher extends Thread {
-    private int identity;
-    private PhilCanvas view;
-    private Diners controller;
-    private Fork left;
-    private Fork right;
+import concurrency.dinner.Diners;
+import concurrency.dinner.Fork;
 
-    Philosopher(Diners ctr, int id, Fork l, Fork r) {
-        controller = ctr;
-        view = ctr.display;
-        identity = id;
-        left = l;
-        right = r;
+public class DeadlockPhilosopher extends Philosopher {
+
+    public DeadlockPhilosopher(Diners controller, int identity, Fork left, Fork right) {
+        super(controller,identity,left,right);
+
     }
+
 
     public void run() {
         try {
