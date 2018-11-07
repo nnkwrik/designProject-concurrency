@@ -10,9 +10,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BlockingQueue<E> {
 
-    private final ReentrantLock lock;
-    private final Condition takeCondition;
-    private final Condition putCondition;
+    protected final ReentrantLock lock;
+    protected final Condition takeCondition;
+    protected final Condition putCondition;
 
     final Object[] items;
 
@@ -25,7 +25,7 @@ public class BlockingQueue<E> {
         this.items = new Object[capacity];
         lock = new ReentrantLock();
         takeCondition = lock.newCondition();
-        putCondition =  lock.newCondition();
+        putCondition = lock.newCondition();
     }
 
     public void put(E e) throws InterruptedException {
@@ -50,7 +50,7 @@ public class BlockingQueue<E> {
         }
     }
 
-    private void enqueue(E x) {
+    protected void enqueue(E x) {
         items[putIndex] = x;
         if (++putIndex == items.length)
             putIndex = 0;
@@ -58,7 +58,7 @@ public class BlockingQueue<E> {
         takeCondition.signal();
     }
 
-    private E dequeue() {
+    protected E dequeue() {
         E x = (E) items[takeIndex];
         items[takeIndex] = null;
         if (++takeIndex == items.length)

@@ -4,6 +4,10 @@ package concurrency.utils;
 // up() is the V operation
 // down() is the P operation
 //
+
+/**
+ * Simple Semaphore
+ */
 public class Semaphore {
 
     private int value;

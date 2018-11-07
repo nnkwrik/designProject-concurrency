@@ -16,9 +16,9 @@ import concurrency.buffer.workStealing.WorkStealingBuffer;
 public class Starter {
 
     public static void main(String[] args) {
-        //TODO 多个时擦除有bug
-        testWaitNotifyAll(2,2);
-//        testWorkStealing(2,1);
+        //TODO 多个时擦除有bug？
+//        testWaitNotifyAll(3,2);
+        testWorkStealing(3,2,10);
 
     }
 
@@ -53,8 +53,12 @@ public class Starter {
     }
 
     public static void testWorkStealing(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        WorkStealingBuffer<Character> b = new DisplayWorkStealingBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT,consumerNum);
+        testWorkStealing(consumerNum,producerNum,BoundedBuffer.SLOT);
+    }
+
+    public static void testWorkStealing(int consumerNum, int producerNum, int slot){
+        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum,slot);
+        WorkStealingBuffer<Character> b = new DisplayWorkStealingBuffer(boundedBuffer.getBuffDisplay(),slot,consumerNum);
         boundedBuffer.startWorkStealing(b);
     }
 

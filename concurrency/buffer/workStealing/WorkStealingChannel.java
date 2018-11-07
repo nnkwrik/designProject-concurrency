@@ -1,10 +1,10 @@
 package concurrency.buffer.workStealing;
 
 import concurrency.buffer.Producer;
+import concurrency.utils.BlockingDeque;
 import concurrency.utils.Logger;
 
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
+
 
 /**
  * @author nnkwrik
@@ -21,7 +21,7 @@ public class WorkStealingChannel<E> {
 
     public void put(final E product) throws InterruptedException {
             int targetIndex = (product.hashCode() % managedQueues.length);
-            BlockingQueue<E> targetQueue = managedQueues[targetIndex];
+            BlockingDeque<E> targetQueue = managedQueues[targetIndex];
             targetQueue.put(product);
             Logger.log(" -> " + "C" + targetIndex);
     }
@@ -30,7 +30,7 @@ public class WorkStealingChannel<E> {
         E product = null;
         BlockingDeque<E> targetQueue = preferredQueue;
 
-        // 优先从指定的队列获取值
+        // 尝试从自己的队列取值
         if (targetQueue != null) {
             product = targetQueue.poll();
         }
@@ -38,8 +38,8 @@ public class WorkStealingChannel<E> {
         if (product == null) {   //自己的工作队列为空
             int queueIndex = (int) (System.currentTimeMillis() % managedQueues.length);
             int tmp = queueIndex;
-            while (product == null) {      //防止倒霉 随机取的是空的Queue
-                //随机窃取 其他受管队列的产品，这里应该遍历一周
+            while (product == null) {
+                //随机窃取 其他受管队列的产品。防止倒霉，这里应该遍历一周
                 targetQueue = managedQueues[queueIndex];
                 product = targetQueue.pollLast();
 

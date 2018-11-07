@@ -14,7 +14,7 @@ public class BufferCanvas extends JPanel {
     int slots_;
     int in_=0;
     int out_=0;
-    char[] buf_ = {' ',' ',' ',' ',' '};
+    char[] buf_;
 
     Font f1 = new Font("Helvetica",Font.ITALIC+Font.BOLD,24);
     Font f2 = new Font("TimesRoman",Font.BOLD,36);
@@ -24,6 +24,7 @@ public class BufferCanvas extends JPanel {
         title_=title;
         slots_=slots;
         setBackground(Color.cyan);
+        buf_ = new char[slots];
     }
 
     public void setValue(char[] buf,int in, int out){
@@ -35,6 +36,7 @@ public class BufferCanvas extends JPanel {
 
     public Dimension getPreferredSize() {
 	return new Dimension(20+50*slots_,150);
+//	return new Dimension(20+50*slots_,150);
     }
 
 
