@@ -6,6 +6,8 @@ import concurrency.buffer.fixedSema.DisplayFixedSemaBuffer;
 import concurrency.buffer.lock.DisplayLockBuffer;
 import concurrency.buffer.swing.BoundedBuffer;
 import concurrency.buffer.waitnotifyAll.DisplayWaitBuffer;
+import concurrency.buffer.workStealing.DisplayWorkStealingBuffer;
+import concurrency.buffer.workStealing.WorkStealingBuffer;
 
 /**
  * @author nnkwrik
@@ -15,7 +17,9 @@ public class Starter {
 
     public static void main(String[] args) {
         //TODO 多个时擦除有bug
-        testBlockingQueue(2,3);
+        testWaitNotifyAll(2,2);
+//        testWorkStealing(2,1);
+
     }
 
     public static void testWaitNotifyAll(int consumerNum, int producerNum){
@@ -46,6 +50,12 @@ public class Starter {
         BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
         Buffer<Character> b = new DisplayBlockingQueueBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
         boundedBuffer.start(b);
+    }
+
+    public static void testWorkStealing(int consumerNum, int producerNum){
+        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
+        WorkStealingBuffer<Character> b = new DisplayWorkStealingBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT,consumerNum);
+        boundedBuffer.startWorkStealing(b);
     }
 
 }

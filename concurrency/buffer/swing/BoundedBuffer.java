@@ -14,6 +14,8 @@ import java.util.stream.IntStream;
 import concurrency.buffer.Buffer;
 import concurrency.buffer.Consumer;
 import concurrency.buffer.Producer;
+import concurrency.buffer.workStealing.WorkStealingBuffer;
+import concurrency.buffer.workStealing.WorkStealingConsumer;
 import concurrency.display.*;
 
 import javax.swing.*;
@@ -101,6 +103,13 @@ public class BoundedBuffer {
                 .forEach(prod -> prod.start(new Producer(buffer)));
         consumerList.stream()
                 .forEach(prod -> prod.start(new Consumer(buffer)));
+    }
+
+    public void startWorkStealing(WorkStealingBuffer<Character> buffer) {
+        producerList.stream()
+                .forEach(prod -> prod.start(new Producer(buffer)));
+        IntStream.range(0, consumerList.size())
+                .forEach(i -> consumerList.get(i).start(new WorkStealingConsumer(buffer,i)));
     }
 
     public void stop() {

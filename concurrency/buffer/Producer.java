@@ -4,6 +4,8 @@
 package concurrency.buffer;
 
 import concurrency.display.*;
+import concurrency.utils.Logger;
+
 
 /*******************PRODUCER************************/
 
@@ -21,8 +23,10 @@ public class Producer implements Runnable {
             int ai = 0;
             while (true) {
                 ThreadPanel.rotate(12);
-                System.out.println("Producer ====> " + alphabet.charAt(ai));
+
+                Logger.log("Producer      ====> [" + alphabet.charAt(ai) + "]");
                 buf.put(alphabet.charAt(ai));
+                Logger.out();
                 ai = (ai + 1) % alphabet.length();
                 ThreadPanel.rotate(348);
             }
