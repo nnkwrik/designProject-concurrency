@@ -6,14 +6,22 @@
 package concurrency.buffer.swing;
 
 import java.awt.*;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import concurrency.buffer.Buffer;
+import concurrency.buffer.BufferEnum;
 import concurrency.buffer.Consumer;
 import concurrency.buffer.Producer;
+import concurrency.buffer.badSema.DisplaySemaBuffer;
+import concurrency.buffer.blockingQueue.DisplayBlockingQueueBuffer;
+import concurrency.buffer.fixedSema.DisplayFixedSemaBuffer;
+import concurrency.buffer.lock.DisplayLockBuffer;
+import concurrency.buffer.waitnotifyAll.DisplayWaitBuffer;
+import concurrency.buffer.workStealing.DisplayWorkStealingBuffer;
 import concurrency.buffer.workStealing.WorkStealingBuffer;
 import concurrency.buffer.workStealing.WorkStealingConsumer;
 import concurrency.display.*;
@@ -22,16 +30,17 @@ import javax.swing.*;
 
 public class BoundedBuffer {
 
-    //    public ThreadPanel prod;
-//    public ThreadPanel cons;
-    public BufferCanvas buffDisplay;
-    public List<ThreadPanel> producerList;
-    public List<ThreadPanel> consumerList;
+
+    private BufferCanvas buffDisplay;
+    private List<ThreadPanel> producerList;
+    private List<ThreadPanel> consumerList;
 
     public static final int CONSUMER = 1;
     public static final int PRODUCER = 1;
     public static final int SLOT = 5;
 
+    private Buffer buffer;
+    private BufferEnum bufferEnum;
 
     private BoundedBuffer() {
     }
@@ -68,53 +77,86 @@ public class BoundedBuffer {
         });
 
 
-
         panel.setBackground(Color.lightGray);
         return panel;
     }
 
 
-    public static BoundedBuffer create() {
-        return create(CONSUMER,PRODUCER,SLOT);
+    public static BoundedBuffer create(BufferEnum bufferEnum) {
+        return create(bufferEnum, CONSUMER, PRODUCER, SLOT);
     }
 
-    public static BoundedBuffer create(int consumerNum, int producerNum) {
-        return create(consumerNum,producerNum,SLOT);
+    public static BoundedBuffer create(BufferEnum bufferEnum, int consumerSize, int producerSize) {
+        return create(bufferEnum, consumerSize, producerSize, SLOT);
     }
 
-    public static BoundedBuffer create(int consumerNum, int producerNum, int slot) {
-        BoundedBuffer boundedBuffer = new BoundedBuffer();
+    public static BoundedBuffer create(BufferEnum bufferEnum, int consumerSize, int producerSize, int slot) {
+
+
+        BoundedBuffer app = new BoundedBuffer();
         JFrame frame = new JFrame("BoundedBuffer");
-        JComponent contents = boundedBuffer.createComponents(consumerNum, producerNum, slot);
+        JComponent contents = app.createComponents(consumerSize, producerSize, slot);
         frame.getContentPane().add(contents);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
-        return boundedBuffer;
+        app.bufferEnum = bufferEnum;
+        switch (bufferEnum) {
+            case WAIT_NOTIFYALL:
+                app.buffer = new DisplayWaitBuffer(app.buffDisplay, slot);
+                break;
+            case BAD_SEMAPHORE:
+                app.buffer = new DisplaySemaBuffer(app.buffDisplay, slot);
+                break;
+            case FIXED_SEMAPHORE:
+                app.buffer = new DisplayFixedSemaBuffer(app.buffDisplay, slot);
+                break;
+            case LOCK:
+                app.buffer = new DisplayLockBuffer(app.buffDisplay, slot);
+                break;
+            case BLOCKING_QUEUE:
+                app.buffer = new DisplayBlockingQueueBuffer(app.buffDisplay, slot);
+                break;
+            case WORK_STEALING:
+                app.buffer = new DisplayWorkStealingBuffer(app.buffDisplay, slot, consumerSize);
+                break;
+        }
+
+
+        return app;
     }
 
-    public BufferCanvas getBuffDisplay() {
-        return buffDisplay;
+
+    public void start() {
+        switch (bufferEnum) {
+            case WORK_STEALING:
+                workStealingStart();
+                break;
+            default:
+                defaultStart();
+                break;
+        }
     }
 
-    public void start(Buffer<Character> buffer) {
+    private void defaultStart(){
         producerList.stream()
                 .forEach(prod -> prod.start(new Producer(buffer)));
         consumerList.stream()
                 .forEach(prod -> prod.start(new Consumer(buffer)));
     }
 
-    public void startWorkStealing(WorkStealingBuffer<Character> buffer) {
+    private void workStealingStart(){
+        DisplayWorkStealingBuffer workStealingBuffer = (DisplayWorkStealingBuffer) buffer;
         producerList.stream()
-                .forEach(prod -> prod.start(new Producer(buffer)));
+                .forEach(prod -> prod.start(new Producer(workStealingBuffer)));
         IntStream.range(0, consumerList.size())
-                .forEach(i -> consumerList.get(i).start(new WorkStealingConsumer(buffer,i)));
+                .forEach(i -> consumerList.get(i).start(new WorkStealingConsumer(workStealingBuffer, i)));
     }
 
     public void stop() {
         producerList.stream()
-                .forEach(prod -> prod.stop());  //TODO
+                .forEach(prod -> prod.stop());
         consumerList.stream()
                 .forEach(prod -> prod.stop());
     }

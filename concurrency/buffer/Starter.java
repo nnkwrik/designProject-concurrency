@@ -16,50 +16,37 @@ import concurrency.buffer.workStealing.WorkStealingBuffer;
 public class Starter {
 
     public static void main(String[] args) {
-        //TODO 多个时擦除有bug？
-//        testWaitNotifyAll(3,2);
-        testWorkStealing(3,2,10);
+        int consumerSize = 3;
+        int producerSize = 2;
 
-    }
 
-    public static void testWaitNotifyAll(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        Buffer<Character> b = new DisplayWaitBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
-        boundedBuffer.start(b);
-    }
+        //TODO 3,2时擦除有bug
 
-    public static void testBadSema(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        Buffer<Character> b = new DisplaySemaBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
-        boundedBuffer.start(b);
-    }
+        //use Object.wait() and Object.notify()
+//        BoundedBuffer.create(BufferEnum.WAIT_NOTIFYALL).start();
+        BoundedBuffer.create(BufferEnum.WAIT_NOTIFYALL, consumerSize, producerSize).start();
 
-    public static void testFixedSema(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        Buffer<Character> b = new DisplayFixedSemaBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
-        boundedBuffer.start(b);
-    }
+        //use 2 semaphore but will be deadlock
+//        BoundedBuffer.create(BufferEnum.BAD_SEMAPHORE).start();
+//        BoundedBuffer.create(BufferEnum.BAD_SEMAPHORE, consumerSize, producerSize).start();
 
-    public static void testLock(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        Buffer<Character> b = new DisplayLockBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
-        boundedBuffer.start(b);
-    }
+        //use 2 semaphore
+//        BoundedBuffer.create(BufferEnum.FIXED_SEMAPHORE).start();
+//        BoundedBuffer.create(BufferEnum.FIXED_SEMAPHORE, consumerSize, producerSize).start();
 
-    public static void testBlockingQueue(int consumerNum, int producerNum){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum);
-        Buffer<Character> b = new DisplayBlockingQueueBuffer(boundedBuffer.getBuffDisplay(),BoundedBuffer.SLOT);
-        boundedBuffer.start(b);
-    }
+        //use lock and condition()
+//        BoundedBuffer.create(BufferEnum.LOCK).start();
+//        BoundedBuffer.create(BufferEnum.LOCK, consumerSize, producerSize).start();
 
-    public static void testWorkStealing(int consumerNum, int producerNum){
-        testWorkStealing(consumerNum,producerNum,BoundedBuffer.SLOT);
-    }
 
-    public static void testWorkStealing(int consumerNum, int producerNum, int slot){
-        BoundedBuffer boundedBuffer = BoundedBuffer.create(consumerNum,producerNum,slot);
-        WorkStealingBuffer<Character> b = new DisplayWorkStealingBuffer(boundedBuffer.getBuffDisplay(),slot,consumerNum);
-        boundedBuffer.startWorkStealing(b);
+        //use blocking queue base array
+//        BoundedBuffer.create(BufferEnum.BLOCKING_QUEUE).start();
+//        BoundedBuffer.create(BufferEnum.BLOCKING_QUEUE, consumerSize, producerSize).start();
+
+        //work stealing algorithm, use blocking deque base array
+//        BoundedBuffer.create(BufferEnum.WORK_STEALING).start();
+//        BoundedBuffer.create(BufferEnum.WORK_STEALING, consumerSize, producerSize,10).start();
+
     }
 
 }
