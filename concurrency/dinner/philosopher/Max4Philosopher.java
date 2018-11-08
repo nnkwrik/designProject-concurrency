@@ -3,14 +3,15 @@ package concurrency.dinner.philosopher;
 import concurrency.dinner.Diners;
 import concurrency.dinner.Fork;
 import concurrency.utils.Logger;
+import concurrency.utils.Semaphore;
 
-public class DeadlockPhilosopher extends Philosopher {
+public class Max4Philosopher extends Philosopher {
 
-    public DeadlockPhilosopher(Diners controller, int identity, Fork left, Fork right) {
-        super(controller,identity,left,right);
+    private static Semaphore semaphore  = new Semaphore(4);
 
+    public Max4Philosopher(Diners controller, int identity, Fork left, Fork right) {
+        super(controller, identity, left, right);
     }
-
 
     public void run() {
         try {
@@ -18,6 +19,8 @@ public class DeadlockPhilosopher extends Philosopher {
                 //thinking
                 view.setPhil(identity, view.THINKING);
                 sleep(controller.sleepTime());
+
+                semaphore.down();
                 //hungry
                 view.setPhil(identity, view.HUNGRY);
                 right.get();
@@ -31,6 +34,8 @@ public class DeadlockPhilosopher extends Philosopher {
                 sleep(controller.eatTime());
                 right.put();
                 left.put();
+                semaphore.up();
+
             }
         } catch (InterruptedException e) {
         }

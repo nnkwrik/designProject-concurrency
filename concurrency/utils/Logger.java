@@ -8,8 +8,12 @@ public class Logger {
         LOGGER.set(log);
     }
 
-    public static void out(){
+    public static void out() {
         System.out.println(LOGGER.get());
         LOGGER.remove();
+    }
+
+    public static void logout(String log) {
+        System.out.println(Thread.currentThread().getName() + " " + log);
     }
 }

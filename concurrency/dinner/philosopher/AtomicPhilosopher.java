@@ -2,43 +2,41 @@ package concurrency.dinner.philosopher;
 
 import concurrency.dinner.Diners;
 import concurrency.dinner.Fork;
+import concurrency.utils.Logger;
+
+public class AtomicPhilosopher extends Philosopher {
 
 
-public class FixedPhilosopher extends Philosopher {
-
-    public FixedPhilosopher(Diners controller, int identity, Fork left, Fork right) {
-        super(controller,identity,left,right);
+    public AtomicPhilosopher(Diners controller, int identity, Fork left, Fork right) {
+        super(controller, identity, left, right);
     }
 
     public void run() {
-        while (true) {
-            try {
+        try {
+            while (true) {
                 //thinking
                 view.setPhil(identity, view.THINKING);
                 sleep(controller.sleepTime());
                 //hungry
                 view.setPhil(identity, view.HUNGRY);
-                //get forks
-                if (identity % 2 == 0) {
-                    left.get();
-                    view.setPhil(identity, view.GOTLEFT);
-                } else {
+
+                synchronized (AtomicPhilosopher.class){
                     right.get();
+                    //gotright chopstick
                     view.setPhil(identity, view.GOTRIGHT);
-                }
-                sleep(500);
-                if (identity % 2 == 0)
-                    right.get();
-                else
+                    sleep(500);
                     left.get();
+                }
                 //eating
+                Logger.logout("EATING");
                 view.setPhil(identity, view.EATING);
                 sleep(controller.eatTime());
                 right.put();
                 left.put();
-            } catch (InterruptedException e) {
+
+
             }
+        } catch (InterruptedException e) {
         }
     }
-
 }
