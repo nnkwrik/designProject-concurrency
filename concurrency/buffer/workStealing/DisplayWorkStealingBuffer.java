@@ -21,12 +21,11 @@ public class DisplayWorkStealingBuffer extends WorkStealingBuffer<Character> {
     }
 
     public void put(Character c) throws InterruptedException {
-        int oldin = in;
         super.put(c);
-
         lock.lock();
         try {
             in = (in + 1) % size;
+            int oldin = (in - 1 + size) % size;
             tmp[oldin] = c;
             disp_.setValue(tmp, in, out);
             Thread.sleep(400);
@@ -48,11 +47,11 @@ public class DisplayWorkStealingBuffer extends WorkStealingBuffer<Character> {
                     .filter(i -> c.charValue() == tmp[i])
                     .findFirst();
 
-            // 可能已经被put进去的新值替换掉了，会找不到
+            // the value maybe replaced by new value,so can't find that is tmp[]
             if (oldout.isPresent()) {
                 tmp[oldout.getAsInt()] = ' ';
             }
-            disp_.setValue(tmp, in, out);   //in`和out只是圆点的位置
+            disp_.setValue(tmp, in, out);
 
         } catch (Exception e) {
             e.printStackTrace();

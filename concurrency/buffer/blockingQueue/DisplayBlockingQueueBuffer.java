@@ -17,12 +17,12 @@ public class DisplayBlockingQueueBuffer extends BlockingQueueBuffer<Character> {
     }
 
     public void put(Character c) throws InterruptedException {
-        int oldin = in;
         super.put(c);
 
         lock.lock();
         try {
             in = (in + 1) % size;
+            int oldin = (in - 1 + size) % size;
             tmp[oldin] = c;
             disp_.setValue(tmp, in, out);
             Thread.sleep(400);
@@ -32,11 +32,11 @@ public class DisplayBlockingQueueBuffer extends BlockingQueueBuffer<Character> {
     }
 
     public Character get() throws InterruptedException {
-        int oldout = out;
         Character c = super.get();
         lock.lock();
         try {
             out = (out + 1) % size;
+            int oldout = (out - 1 + size) % size;
             tmp[oldout] = ' ';
             disp_.setValue(tmp, in, out);
         } finally {

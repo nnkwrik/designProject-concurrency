@@ -14,9 +14,9 @@ public class DisplayFixedSemaBuffer extends FixedSemaBuffer<Character> {
     }
 
     public void put(Character c) throws InterruptedException {
-        int oldin = in;
         super.put(c);
         synchronized (this) {
+            int oldin = (in - 1 + size) % size;
             tmp[oldin] = c;
             disp_.setValue(tmp, in, out);
             Thread.sleep(400);
@@ -24,9 +24,9 @@ public class DisplayFixedSemaBuffer extends FixedSemaBuffer<Character> {
     }
 
     public Character get() throws InterruptedException {
-        int oldout = out;
         Character c = super.get();
         synchronized (this) {
+            int oldout = (out - 1 + size) % size;
             tmp[oldout] = ' ';
             disp_.setValue(tmp, in, out);
         }

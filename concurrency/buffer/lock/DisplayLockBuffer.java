@@ -17,10 +17,10 @@ public class DisplayLockBuffer extends LockBuffer<Character> {
     }
 
     public void put(Character c) throws InterruptedException {
-        int oldin = in;
         super.put(c);
         lock.lock();
         try {
+            int oldin = (in - 1 + size) % size;
             tmp[oldin] = c;
             disp_.setValue(tmp, in, out);
             Thread.sleep(400);
@@ -30,10 +30,10 @@ public class DisplayLockBuffer extends LockBuffer<Character> {
     }
 
     public Character get() throws InterruptedException {
-        int oldout = out;
         Character c = super.get();
         lock.lock();
         try {
+            int oldout = (out - 1 + size) % size;
             tmp[oldout] = ' ';
             disp_.setValue(tmp, in, out);
         } finally {

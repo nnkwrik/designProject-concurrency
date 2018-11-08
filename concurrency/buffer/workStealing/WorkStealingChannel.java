@@ -12,7 +12,7 @@ import concurrency.utils.Logger;
  */
 public class WorkStealingChannel<E> {
 
-    // 双端队列，可以从两端插入值或获取值，继承了BlockingQueue
+    //double-ended queue , can get element from both side
     private final BlockingDeque<E>[] managedQueues;
 
     public WorkStealingChannel(BlockingDeque<E>[] managedQueues) {
@@ -30,16 +30,16 @@ public class WorkStealingChannel<E> {
         E product = null;
         BlockingDeque<E> targetQueue = preferredQueue;
 
-        // 尝试从自己的队列取值
+        // try poll element from mine queue
         if (targetQueue != null) {
             product = targetQueue.poll();
         }
 
-        if (product == null) {   //自己的工作队列为空
+        if (product == null) {   //mine queue is empty
             int queueIndex = (int) (System.currentTimeMillis() % managedQueues.length);
             int tmp = queueIndex;
             while (product == null) {
-                //随机窃取 其他受管队列的产品。防止倒霉，这里应该遍历一周
+                //random to steal element from other queue .
                 targetQueue = managedQueues[queueIndex];
                 product = targetQueue.pollLast();
 
@@ -50,9 +50,9 @@ public class WorkStealingChannel<E> {
             if (product != null && preferredQueue != targetQueue) {
                 int stealedIntex = (queueIndex - 1 >= 0 ? queueIndex - 1 : managedQueues.length - 1);
                 Logger.log("C" + stealedIntex + " <- ");
-            } else if (product == null) {
+            } else if (product == null) { // other queue are empty too
                 targetQueue = preferredQueue;
-                product = targetQueue.take();   //阻塞
+                product = targetQueue.take();   //block
             }
         }
 

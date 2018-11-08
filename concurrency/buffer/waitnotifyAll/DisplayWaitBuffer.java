@@ -13,19 +13,19 @@ public class DisplayWaitBuffer extends WaitBuffer<Character> {
     }
 
     synchronized public void put(Character c) throws InterruptedException {
-        int oldin = in;
         super.put(c);
-        tmp[oldin]= c;
-        disp_.setValue(tmp,in,out);
+        int oldin = (in - 1 + size) % size;
+        tmp[oldin] = c;
+        disp_.setValue(tmp, in, out);
         Thread.sleep(400);
     }
 
     synchronized public Character get() throws InterruptedException {
-        int oldout = out;
         Character c = super.get();
-        tmp[oldout]=' ';
-        disp_.setValue(tmp,in,out);
+        int oldout = (out - 1 + size) % size;
+        tmp[oldout] = ' ';
+        disp_.setValue(tmp, in, out);
         return (c);
     }
- }
+}
 
