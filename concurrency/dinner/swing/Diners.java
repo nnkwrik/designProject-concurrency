@@ -1,5 +1,6 @@
-package concurrency.dinner;
+package concurrency.dinner.swing;
 
+import concurrency.dinner.Fork;
 import concurrency.dinner.philosopher.Philosopher;
 
 import java.awt.BorderLayout;

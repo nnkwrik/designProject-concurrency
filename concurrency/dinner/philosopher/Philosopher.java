@@ -1,8 +1,8 @@
 package concurrency.dinner.philosopher;
 
-import concurrency.dinner.Diners;
+import concurrency.dinner.swing.Diners;
 import concurrency.dinner.Fork;
-import concurrency.dinner.PhilCanvas;
+import concurrency.dinner.swing.PhilCanvas;
 
 public abstract class Philosopher extends Thread {
 

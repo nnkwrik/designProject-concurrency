@@ -1,4 +1,4 @@
-package concurrency.dinner;
+package concurrency.dinner.swing;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

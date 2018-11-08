@@ -1,5 +1,6 @@
 package concurrency.dinner;
 
+import concurrency.dinner.swing.PhilCanvas;
 import concurrency.utils.Logger;
 
 import java.util.concurrent.TimeUnit;

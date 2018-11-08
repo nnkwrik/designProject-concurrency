@@ -1,6 +1,7 @@
 package concurrency.dinner;
 
 import concurrency.dinner.philosopher.*;
+import concurrency.dinner.swing.Diners;
 
 public class Starter {
 
@@ -10,7 +11,7 @@ public class Starter {
 //        Diners.create(DeadlockPhilosopher.class).start();
 
         //Philosopherのidが偶数なら左のフォークから,奇数なら右のフォークから
-//        Diners.create(EvenOddPhilosopher.class).start();
+        Diners.create(EvenOddPhilosopher.class).start();
 
         //フォークを取れるのは最大4人まで
 //        Diners.create(Max4Philosopher.class).start();
@@ -22,6 +23,6 @@ public class Starter {
 //        Diners.create(TimeoutPhilosopher.class).start();
 
         //左右のフォークのうち,　value値の大きいフォークから取る
-        Diners.create(ForkValuePhilosopher.class).start();
+//        Diners.create(ForkValuePhilosopher.class).start();
     }
 }

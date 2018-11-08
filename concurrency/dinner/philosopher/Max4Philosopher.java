@@ -1,6 +1,6 @@
 package concurrency.dinner.philosopher;
 
-import concurrency.dinner.Diners;
+import concurrency.dinner.swing.Diners;
 import concurrency.dinner.Fork;
 import concurrency.utils.Logger;
 import concurrency.utils.Semaphore;
