@@ -2,12 +2,10 @@ package concurrency.buffer.workStealing;
 
 import concurrency.buffer.swing.BufferCanvas;
 
-import java.util.Arrays;
 import java.util.OptionalInt;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class DisplayWorkStealingBuffer extends WorkStealingBuffer<Character> {
     private final Lock lock = new ReentrantLock();

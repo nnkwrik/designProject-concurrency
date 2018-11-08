@@ -6,7 +6,6 @@ package concurrency.buffer.workStealing;
 import concurrency.display.ThreadPanel;
 import concurrency.utils.Logger;
 
-import java.util.Locale;
 
 public class WorkStealingConsumer implements Runnable {
 

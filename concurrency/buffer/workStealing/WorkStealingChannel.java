@@ -1,6 +1,5 @@
 package concurrency.buffer.workStealing;
 
-import concurrency.buffer.Producer;
 import concurrency.utils.BlockingDeque;
 import concurrency.utils.Logger;
 
