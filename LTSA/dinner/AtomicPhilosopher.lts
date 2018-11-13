@@ -1,0 +1,20 @@
+/** Concurrency: State Models and Java Programs
+ *             Jeff Magee and Jeff Kramer
+ *  
+ */
+
+const N = 5
+LOCK = (acquire->release->LOCK).
+
+PHIL = (sitdown->acquire->right.get->left.get->release
+          ->eat->left.put->right.put
+          ->arise->PHIL).
+
+FORK = (get -> put -> FORK).
+
+||DINERS= 
+   forall [i:0..N-1] 
+   (phil[i]:PHIL 
+   ||{phil[i].left,phil[((i-1)+N)%N].right}::FORK).
+
+||C = ({phil[0..N-1]}::LOCK || DINERS).

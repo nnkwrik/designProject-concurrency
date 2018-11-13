@@ -1,0 +1,26 @@
+/** Concurrency: State Models and Java Programs
+ *             Jeff Magee and Jeff Kramer
+ *  
+ */
+
+const N = 5
+const Max = 4
+range Int = 0..Max
+
+SEMAPHORE(N=0) = SEMA[N],
+SEMA[v:Int]    = (up->SEMA[v+1]
+                 |when(v>0) down->SEMA[v-1]
+                 ).
+
+PHIL = (sitdown->down->right.get->left.get
+          ->eat->left.put->right.put->up
+          ->arise->PHIL).
+
+FORK = (get -> put -> FORK).
+
+||DINERS= 
+   forall [i:0..N-1] 
+   (phil[i]:PHIL 
+   ||{phil[i].left,phil[((i-1)+N)%N].right}::FORK).
+
+||C = ({phil[0..N-1]}::SEMAPHORE(Max) || DINERS).
