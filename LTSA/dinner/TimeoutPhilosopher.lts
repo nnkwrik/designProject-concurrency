@@ -22,5 +22,3 @@ FORK[i:0..1] = (put -> FORK[0]
    (phil[i]:PHIL 
    ||{phil[i].left,phil[((i-1)+N)%N].right}::FORK 
    	/{phil[i].left.tick/phil[((i-1)+N)%N].right.tick}).
-
-menu SIMPLE = {phil[0..1].{sitdown,right.get,left.get,eat,left.put,right.put,arise,left.tick}}

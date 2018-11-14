@@ -14,7 +14,7 @@ public class Starter {
 
         //Object.wait() と Object.notify()　による実装
 //        BoundedBuffer.create(BufferEnum.WAIT_NOTIFYALL).start();
-        BoundedBuffer.create(BufferEnum.WAIT_NOTIFYALL, consumerSize, producerSize).start();
+//        BoundedBuffer.create(BufferEnum.WAIT_NOTIFYALL, consumerSize, producerSize).start();
 
         //2つのSemaphoreで実装,空の状態でput(),あるいはフルの状態でget()するとDeadLockになる
 //        BoundedBuffer.create(BufferEnum.BAD_SEMAPHORE).start();

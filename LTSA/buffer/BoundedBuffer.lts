@@ -1,0 +1,19 @@
+/** Concurrency: State Models and Java Programs
+ *             Jeff Magee and Jeff Kramer
+ *  
+ */
+
+BUFFER(N=5) = COUNT[0],
+COUNT[i:0..N]
+      = (when (i<N) put->COUNT[i+1]
+        |when (i>0) get->COUNT[i-1]
+        ).
+
+PRODUCER = (put->PRODUCER).
+CONSUMER = (get->CONSUMER).
+
+//||BOUNDEDBUFFER = (PRODUCER||BUFFER(5)||CONSUMER).
+
+||MANY_PRODUCER(P=2) = forall [0..P-1] (PRODUCER).
+||MANY_CONSUMER(C=3) = forall [0..C-1] (CONSUMER).
+||MANY_BOUNDEDBUFFER = (MANY_PRODUCER || BUFFER(5) || MANY_CONSUMER).

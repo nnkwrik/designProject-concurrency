@@ -1,0 +1,24 @@
+/** Concurrency: State Models and Java Programs
+ *             Jeff Magee and Jeff Kramer
+ *  
+ */
+
+const Max = 5
+range Int = 0..Max
+
+BLOCKING_QUEUE(I=0) = QUEUE[I],
+QUEUE[v:Int]
+      = (when (v<Max) enqueue->QUEUE[v+1]
+        |when (v>0) dequeue->QUEUE[v-1]
+        ).
+BUFFER =  (put -> BUFFER
+          |get -> BUFFER
+          ).
+
+PRODUCER =(enqueue->put->PRODUCER).
+CONSUMER =(dequeue->get->CONSUMER).
+
+
+||BOUNDEDBUFFER = (PRODUCER|| BUFFER || CONSUMER
+                  ||BLOCKING_QUEUE(0))
+		  @{put,get}.

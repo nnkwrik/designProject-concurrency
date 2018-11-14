@@ -1,0 +1,36 @@
+/** Concurrency: State Models and Java Programs
+ *             Jeff Magee and Jeff Kramer
+ *  
+ */
+
+const Max = 5
+range Int = 0..Max
+const ConsumerNum = 2
+
+BLOCKING_DEQUEUE(I=0) = DEQUEUE[I],
+DEQUEUE[v:Int]
+      = (when (v<Max) enqueue -> DEQUEUE[v+1]
+        |when (v>0) {poll,pollLast} -> DEQUEUE[v-1]
+        ).
+		
+BUFFER =  (put -> BUFFER
+          |{c[0..ConsumerNum-1]}.{poll,pollLast}.get -> BUFFER
+          ).
+
+PRODUCER =({c[0..ConsumerNum-1]}.enqueue->put->PRODUCER).
+CONSUMER =(poll->poll.get->CONSUMER
+			|pollLast->pollLast.get->CONSUMER).
+				
+//隣の人のQueueからpoll Last
+||MANY_CONSUMER = forall [i:0..ConsumerNum-1] 
+					(c[i]:CONSUMER
+					/{c[(i+1)%(ConsumerNum)].pollLast/c[i].pollLast}
+					).
+||MANY_DEQUEUE = forall [i:0..ConsumerNum-1] (c[i]:BLOCKING_DEQUEUE
+					/{c[(i+1)%(ConsumerNum)].pollLast/c[i].pollLast}
+					).
+
+ 
+
+||BOUNDEDBUFFER = (PRODUCER|| BUFFER || MANY_CONSUMER || MANY_DEQUEUE)
+					@{put,get}.
